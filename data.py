@@ -63,3 +63,64 @@ class GenreData:
         params = (genre_id)
         result = self.connection.execute_query(query, params)
         return result
+    
+class BookData:
+    def __init__(self, connection=None):
+        if connection is None:
+            self.connection = ConnectionSimulator()
+            self.connection.connect()
+        else:
+            self.connection = connection
+
+    def create_book(self, title, description, cover_image_url, author_id, genre_id, price, is_available=True):
+        query = """
+            INSERT INTO books (title, description, cover_image_url, author_id, genre_id, price, is_available)
+            VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id;
+        """
+        params = (title, description, cover_image_url, author_id, genre_id, price, is_available)
+        result = self.connection.execute_query(query, params)
+        return result
+
+    def get_book(self, book_id):
+        query = "SELECT * FROM books WHERE id = %s;"
+        params = (book_id)
+        result = self.connection.execute_query(query, params)
+        return result
+
+    def update_book(self, book_id, title=None, description=None, cover_image_url=None, author_id=None, genre_id=None, price=None, is_available=None):
+        updates = []
+        params = []
+
+        if title:
+            updates.append("title = %s")
+            params.append(title)
+        if description:
+            updates.append("description = %s")
+            params.append(description)
+        if cover_image_url:
+            updates.append("cover_image_url = %s")
+            params.append(cover_image_url)
+        if author_id:
+            updates.append("author_id = %s")
+            params.append(author_id)
+        if genre_id:
+            updates.append("genre_id = %s")
+            params.append(genre_id)
+        if price is not None:
+            updates.append("price = %s")
+            params.append(price)
+        if is_available is not None:
+            updates.append("is_available = %s")
+            params.append(is_available)
+
+        query = f"UPDATE books SET {', '.join(updates)} WHERE id = %s;"
+        params.append(book_id)
+
+        result = self.connection.execute_query(query, params)
+        return result
+
+    def delete_book(self, book_id):
+        query = "DELETE FROM books WHERE id = %s;"
+        params = (book_id)
+        result = self.connection.execute_query(query, params)
+        return result
