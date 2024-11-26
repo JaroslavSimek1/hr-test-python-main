@@ -156,3 +156,35 @@ class InventoryData:
         params = (inventory_id)
         result = self.connection.execute_query(query, params)
         return result
+
+class OrderData:
+    def __init__(self, connection=None):
+        if connection is None:
+            self.connection = ConnectionSimulator()
+            self.connection.connect()
+        else:
+            self.connection = connection
+
+    def create_order(self, book_id, quantity, order_date):
+        query = "INSERT INTO orders (book_id, quantity, order_date) VALUES (%s, %s, %s) RETURNING id;"
+        params = (book_id, quantity, order_date)
+        result = self.connection.execute_query(query, params)
+        return result
+
+    def get_order(self, order_id):
+        query = "SELECT * FROM orders WHERE id = %s;"
+        params = (order_id)
+        result = self.connection.execute_query(query, params)
+        return result
+
+    def update_order(self, order_id, quantity):
+        query = "UPDATE orders SET quantity = %s WHERE id = %s;"
+        params = (quantity, order_id)
+        result = self.connection.execute_query(query, params)
+        return result
+
+    def delete_order(self, order_id):
+        query = "DELETE FROM orders WHERE id = %s;"
+        params = (order_id)
+        result = self.connection.execute_query(query, params)
+        return result
