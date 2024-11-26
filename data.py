@@ -32,3 +32,34 @@ class AuthorData:
         result = self.connection.execute_query(query, params)
         return result
 
+class GenreData:
+    def __init__(self, connection=None):
+        if connection is None:
+            self.connection = ConnectionSimulator()
+            self.connection.connect()
+        else:
+            self.connection = connection
+
+    def create_genre(self, name):
+        query = "INSERT INTO genres (name) VALUES (%s) RETURNING id;"
+        params = (name)
+        result = self.connection.execute_query(query, params)
+        return result
+
+    def get_genre(self, genre_id):
+        query = "SELECT * FROM genres WHERE id = %s;"
+        params = (genre_id)
+        result = self.connection.execute_query(query, params)
+        return result
+
+    def update_genre(self, genre_id, name):
+        query = "UPDATE genres SET name = %s WHERE id = %s;"
+        params = (name, genre_id)
+        result = self.connection.execute_query(query, params)
+        return result
+
+    def delete_genre(self, genre_id):
+        query = "DELETE FROM genres WHERE id = %s;"
+        params = (genre_id)
+        result = self.connection.execute_query(query, params)
+        return result
